@@ -2,12 +2,13 @@
 
 # HIIdentify
 
+![GitHub last commit](https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic)
+![version](https://img.shields.io/pypi/v/HIIdentify?style=plastic)
+![license](https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic)
+
 Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H$\alpha$ emssion line flux. 
 
 *Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome*.
-
-![GitHub last commit](https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic)
-![GitHub last commit](https://img.shields.io/pypi/v/HIIdentify?style=plastic)
 
 HIIdentify works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak. 
 
@@ -24,6 +25,11 @@ In the right-hand image, the segmentation map returned by HIIdentify can be seen
 
 
 ## Installing HIIdentify
+
+To install `HIIdentify` using [pip](https://pip.pypa.io/en/stable/), run:
+```
+pip install HIIdentify
+```
 
 ## Using HIIdentify
 
