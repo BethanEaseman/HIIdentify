@@ -13,12 +13,8 @@ are assumed to be the HII regions when using a H alpha map.
 Citation: Easeman et al. (2022), in prep.
 """
 
-from os import path
 import sys
 import numpy as np
-
-
-from MUSEspec.spectrum3d import Spectrum3d
 
 from astropy.io import fits
 from astropy.cosmology import WMAP9 as cosmo #pylint: disable=no-name-in-module
@@ -26,53 +22,7 @@ from astropy.cosmology import WMAP9 as cosmo #pylint: disable=no-name-in-module
 
 
 
-def read_in_map(fname, SNlim=None, verbose=False, BPT_cut=True, z=None, datadir='./',
-galaxy_name=''):
-    """
-    Reads in a fits file from a given filename, and returns the data and header
 
-    fname - str
-        The relative filepath to the required map (normally H alpha)
-    SNlim - float
-        If a float is given, the flux values for pixels with a signal / noise of less
-        than this value are set to 0. Default = None.
-    verbose - bool
-        If True, prints additional information. Default = False.
-    =============
-    Returns:
-        Map, header
-    """
-    print("Reading in ", fname)
-    if not path.isfile(fname): #check file exists
-        raise Exception(f"File {fname} not found.")
-
-    with fits.open(fname) as tmp:
-        data, header = tmp['MAP'].data, tmp['MAP'].header # pylint: disable=no-member
-        # disabling pylint error for no-member, as it's suggesting an issue with
-        # .data and .header for some reason!
-        if SNlim is not None:
-            std = tmp['STD'].data # pylint: disable=no-member
-            # Set flux values to 0. for pixels with S/N < the given limit.
-            sel = (data/std) < SNlim
-            data[sel] = 0.
-
-            print_msg(f"{np.count_nonzero(sel)} pixels removed due to S/N lim", verbose)
-
-
-    if BPT_cut:
-        if z is None or galaxy_name=='':
-            raise Exception("read_in_map: need to specify a redshift and galaxy name if want\
-                             to apply BPTcut")
-        s3d = Spectrum3d(filen = datadir+galaxy_name+'_gas_cube.fits.fz', datadir=datadir,
-                        target=galaxy_name, z=z, fwhm=1)
-
-        SF_sel = np.array(s3d.BPTcut(return_line_ratios=False))
-        # Returns boolean mask, with True for SF pixels
-        data[~SF_sel] = np.nan
-
-
-    print_msg('Map read in successfully', verbose)
-    return data, header, (data/std)
 
 
 def determine_bkg_flux(linemap, HaEW, distmap, hasn, hasn_lim, \
@@ -425,70 +375,6 @@ def determine_annuli(yindx, xindx, peak_idx, maxdist, annulus_ind, AngD, pixsky)
 
     return annuli, distmap
 
-
-
-# def add_pixels_to_region(annuli, linemap, peak_idx, peak_flux, flux_fraction, pixel_tracker,
-# distmap, dist_from_peak, verbose, region_ID_map):
-#    """
-#     Determines which pixels meet the conditions to be added to the region. moving radially
-#     outwards from the peak, in annuli.
-
-#     ==========
-#     Returns:
-#     ==========
-#     add_to_region: list of indices of pixels to be added to the region
-#     distance: distance of each pixel from the peak
-#     moved_pixels: list of indices of pixels which have moved region, to be marked in the pixel
-#      tracker map
-#     """
-
-#     add_to_region, distance, moved_pixels = [peak_idx],[0.], []
-#     med_prev_annulus = 1e100 # Want medians to get lower as move outwards
-
-#     for annulus in annuli:
-#         num_in_annulus, num_below_lim = len(annulus), 0
-
-#         annulus_fluxes = np.array([linemap[y,x] for y,x in annulus])
-#         already_assigned = np.array([region_ID_map[y,x]>0 for y,x in annulus])
-
-#         if np.nanmedian(annulus_fluxes[~already_assigned]) > med_prev_annulus:
-#             break # Stop if median has gone down and then up again
-#             #Only consider unassigned pixels to avoid issues with merged regions.
-
-
-#         for y,x in annulus: # Go through each pixel in the annulus
-
-#             # If the flux is below peak flux * flux fraction, then reject
-#             if not (linemap[y,x] >= (peak_flux * flux_fraction)): #so NaNs also excluded
-#                 #y,x as MUSE cubes in the form y,x,lambda when read in using fits.open().
-#                 num_below_lim += 1
-#                 if pixel_tracker[y,x] <= 0: #if hasn't already been assigned to region
-#                     pixel_tracker[y,x] = 1.
-#                 continue
-
-#             # Otherwise...
-#             if region_ID_map[y,x] == -50:
-#                 # If pixel hasn't been assigned to a region already.
-#                 add_to_region.append((y,x))
-#                 distance.append(distmap[y,x])
-#             else:
-#                 print(f"Pixel ({x},{y}) has already been assigned to a region", verbose)
-#                 if dist_from_peak[y,x] <= distmap[y,x]:
-#                     #If closer to previous peak, leave there
-#                     print_msg("Closer to previous peak, leaving where it is.", verbose)
-#                 else:
-#                     print_msg("Moving to new region", verbose)
-#                     moved_pixels.append((y,x))
-#                     add_to_region.append((y,x))
-#                     distance.append(distmap[y,x])
-
-#         if num_below_lim == num_in_annulus: # If all pixels in that annulus
-#             # were below the threshold, then stop there.
-#             print_msg("Finished adding pixels to region", verbose)
-#             break
-#         med_prev_annulus = np.nanmedian(annulus_fluxes)
-
-#     return add_to_region, distance, moved_pixels
 
 
 def add_pixels_to_region(annuli, linemap, peak_idx, peak_flux, bkg_flux, pixel_tracker, distmap,
