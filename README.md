@@ -7,6 +7,7 @@ Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a
 *Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome*.
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic)
+![GitHub last commit](https://img.shields.io/pypi/v/HIIdentify?style=plastic)
 
 HIIdentify works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak. 
 
