@@ -1,0 +1,7 @@
+# emacs backups
+*~
+# python files
+*.egg-info
+*.pyc
+dist/
+build/
