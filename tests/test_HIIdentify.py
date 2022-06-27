@@ -7,7 +7,7 @@ import numpy as np
 from astropy.io import fits
 
 import create_test_images as cti
-from ..HIIdentify.HIIdentify import identify_HII_regions
+from HIIdentify.HIIdentify import identify_HII_regions
 
 
 def read_in_fits(fname):
@@ -72,9 +72,25 @@ class HIIdentifyTestCase(unittest.TestCase):
         ideal_seg_map = np.array(self.isr[self.isr>0.5], dtype=int)
 
         identify_HII_regions(self.isr, self.isr_head,flux_llim=1, #pylint: disable=invalid-name
-                             flux_ulim=20, z=1, obj_name='isolated_region', bkg_flux=0.5,
-                             max_radius_kpc=None, max_radius_arcsec=None,
-                             min_pixels=5, verbose=False, tdir='test_results')
+                             flux_ulim=20, z=0.001, obj_name='isolated_region', bkg_flux=0.5,
+                             max_radius_kpc=5, max_radius_arcsec=None,
+                             min_pixels=5, verbose=False, tdir='test_results/')
+
+        ideal_map = np.array(self.isr > 0.5, dtype=int)
+
+        with fits.open('test_results/isolated_region_HII_segmentation_map.fits') as tmp:
+            seg_map = tmp['Region_IDs'].data
+
+        #Check that > 90% of the pixels identified in the real map match the ideal map:
+        num_matching = np.count_nonzero(ideal_map == seg_map)
+        ideal_total = np.count_nonzero(ideal_map)
+        seg_total = np.count_nonzero(seg_map)
+
+        self.assertTrue(num_matching > (0.9 * ideal_total))
+        self.assertTrue(num_matching > (0.9 * seg_total))
+
+
+
 
 
 
