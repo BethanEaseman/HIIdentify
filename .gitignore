@@ -5,3 +5,4 @@
 *.pyc
 dist/
 build/
+tests/test_results
