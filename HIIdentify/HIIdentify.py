@@ -246,7 +246,7 @@ def determine_distances(z, max_radius_arcsec, max_radius_kpc, header, linemap_sh
     ==========
     """
     #Determine the maximum distance from the peak to consider pixels for HII region
-    AngD=(cosmo.kpc_proper_per_arcmin(z).value[0]) /60
+    AngD=(cosmo.kpc_proper_per_arcmin(z).value) /60
     pixsky = (header['CD1_1']**2 + header['CD1_2']**2) ** 0.5 * 3600
 
     # arcsec to kpc - multiply by AngD
