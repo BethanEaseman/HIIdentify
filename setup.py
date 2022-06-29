@@ -11,7 +11,7 @@ def install():
     '''The installer'''
 
     this_directory = path.abspath(path.dirname(__file__))
-    with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as file_id:
+    with open(path.join(this_directory, 'README.md'), encoding='utf-8') as file_id:
         long_description = file_id.read()
     short_description = ('Identifies HII regions from H alpha emission line maps.')
 
