@@ -48,7 +48,7 @@ def determine_bkg_flux(linemap, HaEW, distmap, hasn, hasn_lim, \
 
 def identify_HII_regions(linemap, header, flux_llim, flux_ulim, z, #pylint: disable=invalid-name
                          obj_name, bkg_flux, max_radius_kpc=None, max_radius_arcsec=None,
-                         min_pixels=2, min_distance=0., verbose=False, tdir='./'):
+                         min_pixels=2, min_separation=0., verbose=False, tdir='./'):
     # getting pylint to ignore that HII doesn't conform to snake-case style
     """
     Using a Ha map, identifies HII regions based on the brightest regions within the map.
@@ -159,9 +159,9 @@ HII regions.")
         annuli, distmap = determine_annuli(yindx,xindx,peak_idx,maxdist, annulus_ind, AngD, pixsky)
 
 
-        #Check that there isn't another peak closer than the min_distance away
+        #Check that there isn't another peak closer than the min_separation away
         linemap, peak_tracker_val, reject_msg = check_nearest_peak(linemap, peak_idx,\
-            peak_tracker_val=peak_tracker[peak_idx], distmap=distmap, min_distance=min_distance)
+            peak_tracker_val=peak_tracker[peak_idx], distmap=distmap, min_separation=min_separation)
         peak_tracker[peak_idx] = peak_tracker_val
         if linemap[peak_idx] == -99: #if peak is rejected
             print_msg(reject_msg, verbose)
@@ -224,7 +224,7 @@ pixels assigned to a HII region \n")
     \n 1: Surrounded by >4 non-finite values - just noise. \
     \n 2: Adjacent to an already-identified peak, or pixel with higher flux \
     \n 3: Median of surrounding pixels < 0.1 * peak_flux \
-    \n 4: Within {min_distance} of another peak \
+    \n 4: Within {min_separation}kpc of another peak \
     \n 5: Pixel successfully identified as the peak of a HII region. \
     \n==============\n Pixel tracker map: \n 0: Pixel not considered \
     \n 1: Pixel rejected - below flux threshold \
@@ -346,13 +346,13 @@ disregarding this one"
 
 
 
-def check_nearest_peak(linemap, peak_idx, peak_tracker_val, distmap, min_distance):
+def check_nearest_peak(linemap, peak_idx, peak_tracker_val, distmap, min_separation):
     """
-    Checks if another peak has already been identified less than min_distance away.
+    Checks if another peak has already been identified less than min_separation away.
     """
 
-    if np.any(distmap[linemap == -99] < min_distance):
-        reject_msg = f"Within {min_distance} of another peak"
+    if np.any(distmap[linemap == -99] < min_separation):
+        reject_msg = f"Within {min_separation}kpc of another peak"
         peak_tracker_val = 4.
         linemap[peak_idx] = -99
 
