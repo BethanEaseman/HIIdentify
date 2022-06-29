@@ -48,7 +48,7 @@ def determine_bkg_flux(linemap, HaEW, distmap, hasn, hasn_lim, \
 
 def identify_HII_regions(linemap, header, flux_llim, flux_ulim, z, #pylint: disable=invalid-name
                          obj_name, bkg_flux, max_radius_kpc=None, max_radius_arcsec=None,
-                         min_pixels=2, verbose=False, tdir='./'):
+                         min_pixels=2, min_distance=0., verbose=False, tdir='./'):
     # getting pylint to ignore that HII doesn't conform to snake-case style
     """
     Using a Ha map, identifies HII regions based on the brightest regions within the map.
@@ -105,6 +105,9 @@ def identify_HII_regions(linemap, header, flux_llim, flux_ulim, z, #pylint: disa
  limit of {flux_ulim:.2e}")
     linemap[linemap > flux_ulim] = 0.
     num_bright_pixels = np.count_nonzero(linemap > flux_llim)
+    if num_bright_pixels == 0:
+        raise Exception(f"No pixels with flux above {flux_llim} identified in the map.")
+
     print(f"{num_bright_pixels} pixels have flux values above the given flux_llim of \
 {flux_llim:.2e}")
 
@@ -143,18 +146,27 @@ HII regions.")
 
         # Check that the surrounding 8 pixels meet various conditions
         linemap, peak_tracker_val, reject_msg = check_surrounding_pixels(linemap, peak_idx,\
-                                                peak_tracker_val=peak_tracker[peak_idx])
+                                                            peak_tracker_val=peak_tracker[peak_idx])
         peak_tracker[peak_idx] = peak_tracker_val
         if linemap[peak_idx] == -99: #if peak is rejected
             print_msg(reject_msg, verbose)
             continue
 
 
-        # Have identified a peak, now want to check the surrounding pixels, and add them to the
-        # HII region
+        # Have identified a peak, now want to add surrounding pixels to the HII region
 
-        #Start by determining annuli to use
+        #Start by determining maps of distance from the peak, and annuli to use
         annuli, distmap = determine_annuli(yindx,xindx,peak_idx,maxdist, annulus_ind, AngD, pixsky)
+
+
+        #Check that there isn't another peak closer than the min_distance away
+        linemap, peak_tracker_val, reject_msg = check_nearest_peak(linemap, peak_idx,\
+            peak_tracker_val=peak_tracker[peak_idx], distmap=distmap, min_distance=min_distance)
+        peak_tracker[peak_idx] = peak_tracker_val
+        if linemap[peak_idx] == -99: #if peak is rejected
+            print_msg(reject_msg, verbose)
+            continue
+
 
         # Want to go through each pixel within each annulus, checking if they meet the criteria to
         # be added to the HII region. Will then check if the number of pixels meeting the
@@ -168,7 +180,7 @@ HII regions.")
 
         if len(add_to_region) > min_pixels:
             peaks_map[peak_idx] = region_ID
-            peak_tracker[peak_idx] = 4.
+            peak_tracker[peak_idx] = 5.
             for idx, dist in zip(add_to_region, distance):
                 region_ID_map[idx] = region_ID
                 dist_from_peak[idx] = dist
@@ -208,11 +220,12 @@ pixels assigned to a HII region \n")
     print("\nMaps saved at:  ", tdir+obj_name+"_HII_segmentation_map.fits   ", \
         tdir+obj_name+"_HII_trackermaps.fits")
 
-    print("\n==============\n Peaks tracker map: \n 0: Pixel not considered \
+    print(f"\n==============\n Peaks tracker map: \n 0: Pixel not considered \
     \n 1: Surrounded by >4 non-finite values - just noise. \
     \n 2: Adjacent to an already-identified peak, or pixel with higher flux \
     \n 3: Median of surrounding pixels < 0.1 * peak_flux \
-    \n 4: Pixel successfully identified as the peak of a HII region. \
+    \n 4: Within {min_distance} of another peak \
+    \n 5: Pixel successfully identified as the peak of a HII region. \
     \n==============\n Pixel tracker map: \n 0: Pixel not considered \
     \n 1: Pixel rejected - below flux threshold \
     \n 2: Pixel assigned to region \n 3: Pixel has moved region \
@@ -300,8 +313,13 @@ def check_surrounding_pixels(linemap, peak_idx, peak_tracker_val):
     reject_msg: str, message describing reason for rejection
     """
 
-    surrounding_ha = linemap[peak_idx[0]-1:peak_idx[0]+2, peak_idx[1]-1:peak_idx[1]+2].flatten()
-    surrounding_ha = np.delete(surrounding_ha, 4) # remove central
+
+    yindx, xindx = np.indices(linemap.shape)[0], np.indices(linemap.shape)[1]
+    ymin, ymax = peak_idx[0]-1, peak_idx[0]+2
+    xmin, xmax = peak_idx[1]-1, peak_idx[1]+2
+    mask = (yindx < ymax) & (yindx >= ymin) & (xindx >= xmin) & (xindx < xmax)
+    mask[peak_idx] = False # remove the central pixel
+    surrounding_ha = linemap[mask]
 
     if np.count_nonzero(~np.isfinite(surrounding_ha)) > 4:
         reject_msg = "Bright pixel is surrounded by >4 non-finite values"
@@ -325,6 +343,26 @@ disregarding this one"
 
 
     return linemap, peak_tracker_val, reject_msg
+
+
+
+def check_nearest_peak(linemap, peak_idx, peak_tracker_val, distmap, min_distance):
+    """
+    Checks if another peak has already been identified less than min_distance away.
+    """
+
+    if np.any(distmap[linemap == -99] < min_distance):
+        reject_msg = f"Within {min_distance} of another peak"
+        peak_tracker_val = 4.
+        linemap[peak_idx] = -99
+
+    else:
+        reject_msg=''
+        peak_tracker_val = -5
+
+
+    return linemap, peak_tracker_val, reject_msg
+
 
 
 
