@@ -29,7 +29,7 @@ def install():
           url='https://github.com/BethanEaseman/HIIdentify',
           # project_urls={},
           # classifiers=[],
-          install_requires=['numpy', 'astropy', 'matplotlib'],
+          install_requires=['numpy', 'astropy', 'matplotlib', 'myst_parser'],
           python_requires=">=3.6",
           # entry_points={}
     )
