@@ -78,9 +78,11 @@ def isolated_region():
     gaussian = create_regions(x_mean=0., y_mean=0., stddev=10., amplitude=10.)
 
     hdu = fits.PrimaryHDU(gaussian)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/isolated_region.fits", overwrite=True)
+
+    return gaussian, hdu.header
 
 def noisy_isolated_region():
     """
@@ -91,8 +93,8 @@ def noisy_isolated_region():
     gaussian = add_noise(gaussian, scale=0.5)
 
     hdu = fits.PrimaryHDU(gaussian)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/noisy_isolated_region.fits", overwrite=True)
 
 
@@ -106,9 +108,11 @@ def faint_isolated_region():
     gaussian = add_noise(gaussian, scale=0.1)
 
     hdu = fits.PrimaryHDU(gaussian)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/faint_isolated_region.fits", overwrite=True)
+
+    return gaussian, hdu.header
 
 
 def multiple_regions():
@@ -120,9 +124,11 @@ def multiple_regions():
     gaussian = add_noise(gaussian, scale=0.3)
 
     hdu = fits.PrimaryHDU(gaussian)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/multiple_regions.fits", overwrite=True)
+
+    return gaussian, hdu.header
 
 def merged_regions():
 
@@ -133,9 +139,11 @@ def merged_regions():
     gaussian = add_noise(gaussian, scale=0.1)
 
     hdu = fits.PrimaryHDU(gaussian)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/merged_regions.fits", overwrite=True)
+
+    return gaussian, hdu.header
 
 
 def just_noise():
@@ -154,9 +162,11 @@ def just_noise():
     image[16,16] = 10.
 
     hdu = fits.PrimaryHDU(image)
-    hdu.header['CD1_1'] = 5e-3
-    hdu.header['CD1_2'] = 5e-3
+    hdu.header['CD1_1'] = 4e-5
+    hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/just_noise.fits", overwrite=True)
+
+    return image, hdu.header
 
 
 
