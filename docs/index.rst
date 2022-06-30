@@ -29,6 +29,24 @@ HIIdentify
 ==========
 |
 
+.. image:: https://readthedocs.org/projects/hiidentify/badge/?version=lateststyle=plastic
+   :target: https://hiidentify.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
+.. image:: https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic
+   :target: https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic
+   :alt: Last commit
+
+
+.. image:: https://img.shields.io/pypi/v/HIIdentify?style=plastic
+   :target: https://img.shields.io/pypi/v/HIIdentify?style=plastic
+   :alt: Version
+
+.. image:: https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic
+   :target: https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic
+   :alt: License
+
+
 Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H :math:`\alpha` emssion line flux.
 
 *Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome*.

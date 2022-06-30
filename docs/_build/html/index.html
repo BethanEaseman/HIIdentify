@@ -38,6 +38,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
+<a class="reference external image-reference" href="https://hiidentify.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/hiidentify/badge/?version=lateststyle=plastic" /></a>
+<a class="reference external image-reference" href="https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic"><img alt="Last commit" src="https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic" /></a>
+<a class="reference external image-reference" href="https://img.shields.io/pypi/v/HIIdentify?style=plastic"><img alt="Version" src="https://img.shields.io/pypi/v/HIIdentify?style=plastic" /></a>
+<a class="reference external image-reference" href="https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic"><img alt="License" src="https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic" /></a>
 <p>Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emssion line flux.</p>
 <p><em>Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome</em>.</p>
 <p>HIIdentify works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak.</p>
