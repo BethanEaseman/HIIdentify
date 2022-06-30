@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>HIIdentify &#8212; HIIdentify 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <a class="reference internal image-reference" href="_images/HIIdentify-logo.png"><img alt="HIIdentify logo" src="_images/HIIdentify-logo.png" style="width: 200px; height: 165px;" /></a>
+<section id="hiidentify">
+<h1>HIIdentify<a class="headerlink" href="#hiidentify" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emssion line flux.</p>
+<p><em>Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome</em>.</p>
+<p>HIIdentify works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak.</p>
+<p>In the below example map (<em>left</em>), the flux of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emission line can be seen, with the highest flux regions show in yellow, and lowest flux regions in purple. The regions identfied by HIIdentify can be seen as the red outlines. Here it can be seen that the regions are not restricted to being a particular shape, and that all regions with a peak flux above a given limit have been identified.</p>
+<p>In the right-hand image, the segmentation map returned by HIIdentify can be seen. A 2D map is returned, with all pixels corresponding to a particular HII region set to the ID number of the region. This allows the segmentation map to be used to mask out regions of maps of other parameters, such as line fluxes or metallicity maps, pertaining to the selected HII region.</p>
+<img alt="HIIdentify examples" class="align-center" src="_images/NGC1483_ha_regionoutline_segmentationmap.png" />
+<section id="installing-hiidentify">
+<h2>Installing HIIdentify<a class="headerlink" href="#installing-hiidentify" title="Permalink to this headline">¶</a></h2>
+<p>To install <code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> using <a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a>, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">HIIdentify</span>
+</pre></div>
+</div>
+</section>
+<section id="using-hiidentify">
+<h2>Using HIIdentify<a class="headerlink" href="#using-hiidentify" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-to-cite-hiidentify">
+<h2>How to cite HIIdentify<a class="headerlink" href="#how-to-cite-hiidentify" title="Permalink to this headline">¶</a></h2>
+<p>If you use HIIdentify as part of your work, please cite Easeman et al. (2022) <em>in prep</em>.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">HIIdentify</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Bethan Easeman.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
