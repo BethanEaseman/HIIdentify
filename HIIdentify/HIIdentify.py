@@ -276,7 +276,6 @@ def determine_distances(z, max_radius_arcsec, max_radius_kpc, header, linemap_sh
         max_radius_kpc = max_radius_arcsec * AngD
         max_radius_pix = max_radius_arcsec / pixsky
 
-    print(max_radius_arcsec, max_radius_pix, max_radius_kpc)
 
     print(f"Maximum radius for the HII regions set to {max_radius_pix:.2f} pixels, \
 {max_radius_arcsec:.3f} arcsec, {max_radius_kpc:.3f} kpc")
