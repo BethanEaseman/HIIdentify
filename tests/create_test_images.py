@@ -97,6 +97,7 @@ def noisy_isolated_region():
     hdu.header['CD1_2'] = 4e-5
     hdu.writeto("images_for_testing/noisy_isolated_region.fits", overwrite=True)
 
+    return gaussian, hdu.header
 
 
 def faint_isolated_region():

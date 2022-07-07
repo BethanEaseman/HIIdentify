@@ -67,7 +67,7 @@ In the right-hand image, the segmentation map returned by HIIdentify can be seen
 Installing HIIdentify
 =====================
 
-To install ``HIIdentify`` using `pip <https://pip.pypa.io/en/stable/>`_, run::
+``HIIdentify`` can be found on `PyPI <https://pypi.org/project/HIIdentify/>`_, and installed using `pip <https://pip.pypa.io/en/stable/>`_, by running::
 
     pip install HIIdentify
 

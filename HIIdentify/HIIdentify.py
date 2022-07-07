@@ -25,12 +25,13 @@ from astropy.cosmology import WMAP9 as cosmo #pylint: disable=no-name-in-module
 
 
 
-def determine_bkg_flux(linemap, HaEW, distmap, hasn, hasn_lim, \
-                       percentile=75, dist_lim=1.5): #pylint: disable=invalid-name
+def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_lim, \
+                       percentile=75, dist_lim=1.5, galaxy_name='', \
+                       tdir='./'): #pylint: disable=invalid-name
     # getting pylint to ignore that HaEW doesn't conform to snake-case style
     """
     Determines a value for the background flux, to be given to identify_HII_regions.
-    Finds the mean of the Ha flux values for pixels with HaEW > 6 and < 14, returns mean + std.
+    Finds the median or percentile of the Ha flux values for pixels with HaEW > 6 and < 14
 
     linemap- 2D array
         2D array of flux values with cuts already applied for HaEW and BPT region.
@@ -38,7 +39,11 @@ def determine_bkg_flux(linemap, HaEW, distmap, hasn, hasn_lim, \
         2D array of HaEW values
     """
 
-    sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & (hasn>hasn_lim)
+    sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & (hasn>hasn_lim) \
+          & (HaEW_sn > HaEWsnlim)
+
+    hdu = fits.PrimaryHDU(np.array(sel, dtype=float))
+    hdu.writeto(f"{tdir}{galaxy_name}_bkg_flux_mask.fits", overwrite=True)
 
     if percentile == 'median':
         return np.nanmedian(linemap[sel])
@@ -129,7 +134,8 @@ def identify_HII_regions(linemap, header, flux_llim, flux_ulim, z, #pylint: disa
 
     while continue_searching:
         sys.stdout.write(f'\r Loop number {loop_counter}, \
-{(loop_counter*100/num_bright_pixels):.1f} % of bright pixels considered')
+{(loop_counter*100/num_bright_pixels):.1f}% of bright pixels considered, \
+{region_ID-1} HII regions identified')
         loop_counter += 1
 
         # Identify brightest pixel and it's index:
@@ -160,7 +166,7 @@ HII regions.")
 
 
         #Check that there isn't another peak closer than the min_separation away
-        linemap, peak_tracker_val, reject_msg = check_nearest_peak(linemap, peak_idx,\
+        linemap, peak_tracker_val, reject_msg = check_nearest_peak(linemap, peak_tracker, peak_idx,\
             peak_tracker_val=peak_tracker[peak_idx], distmap=distmap, min_separation=min_separation)
         peak_tracker[peak_idx] = peak_tracker_val
         if linemap[peak_idx] == -99: #if peak is rejected
@@ -220,13 +226,13 @@ pixels assigned to a HII region \n")
     print("\nMaps saved at:  ", tdir+obj_name+"_HII_segmentation_map.fits   ", \
         tdir+obj_name+"_HII_trackermaps.fits")
 
-    print(f"\n==============\n Peaks tracker map: \n 0: Pixel not considered \
+    print(f"\n==============\n Peaks tracker map: \n -5: Pixel not considered \
     \n 1: Surrounded by >4 non-finite values - just noise. \
     \n 2: Adjacent to an already-identified peak, or pixel with higher flux \
     \n 3: Median of surrounding pixels < 0.1 * peak_flux \
     \n 4: Within {min_separation}kpc of another peak \
     \n 5: Pixel successfully identified as the peak of a HII region. \
-    \n==============\n Pixel tracker map: \n 0: Pixel not considered \
+    \n==============\n Pixel tracker map: \n -5: Pixel not considered \
     \n 1: Pixel rejected - below flux threshold \
     \n 2: Pixel assigned to region \n 3: Pixel has moved region \
     \n 4: Pixel considered, but too few pixels in region to meet threshold. \
@@ -275,6 +281,7 @@ def determine_distances(z, max_radius_arcsec, max_radius_kpc, header, linemap_sh
     elif max_radius_arcsec is not None:
         max_radius_kpc = max_radius_arcsec * AngD
         max_radius_pix = max_radius_arcsec / pixsky
+
 
     print(f"Maximum radius for the HII regions set to {max_radius_pix:.2f} pixels, \
 {max_radius_arcsec:.3f} arcsec, {max_radius_kpc:.3f} kpc")
@@ -346,12 +353,12 @@ disregarding this one"
 
 
 
-def check_nearest_peak(linemap, peak_idx, peak_tracker_val, distmap, min_separation):
+def check_nearest_peak(linemap, peak_tracker_map, peak_idx, peak_tracker_val, distmap, min_separation):
     """
     Checks if another peak has already been identified less than min_separation away.
     """
 
-    if np.any(distmap[linemap == -99] < min_separation):
+    if np.any(distmap[peak_tracker_map == 5] < min_separation):
         reject_msg = f"Within {min_separation}kpc of another peak"
         peak_tracker_val = 4.
         linemap[peak_idx] = -99

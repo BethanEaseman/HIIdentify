@@ -27,23 +27,20 @@ class HIIdentifyTestCase(unittest.TestCase):
 
     Checks that regions are correctly identified in test cases.
     """
-    def setUp(self):
-        self.isr, self.isr_head = cti.isolated_region()
-        self.nir, self.nir_head = cti.noisy_isolated_region()
-        self.fir, self.fir_head = cti.faint_isolated_region()
-        self.mur, self.mur_head = cti.multiple_regions()
-        self.mer, self.mer_head = cti.merged_regions()
-        self.jun, self.jun_head = cti.just_noise()
+    # def setUp(self):
+    #     self.fir, self.fir_head = cti.faint_isolated_region()
+    #     self.mer, self.mer_head = cti.merged_regions()
 
 
     def test_isolated_region(self):
         """
         Test for an isolated region.
         """
+        self.isr, self.isr_head = cti.isolated_region()
 
-        identify_HII_regions(self.isr.copy(), self.isr_head, flux_llim=1, #pylint: disable=invalid-name
-                             flux_ulim=20, z=0.01, obj_name='isolated_region', bkg_flux=0.5,
-                             max_radius_kpc=1, max_radius_arcsec=None,
+        identify_HII_regions(self.isr.copy(), self.isr_head, #pylint: disable=invalid-name
+                             flux_llim=1, flux_ulim=20, z=0.01, obj_name='isolated_region',
+                             bkg_flux=0.5, max_radius_kpc=1, max_radius_arcsec=None,
                              min_pixels=5, verbose=False, tdir='test_results/')
 
         ideal_map = np.zeros_like(self.isr)
@@ -73,11 +70,12 @@ class HIIdentifyTestCase(unittest.TestCase):
         """
         Test for a noisy isolated region
         """
+        self.nir, self.nir_head = cti.noisy_isolated_region()
 
-        identify_HII_regions(self.nir.copy(), self.nir_head, flux_llim=9, # pylint: disable=invalid-name
-                             flux_ulim=20, z=0.01, obj_name='noisy_isolated_region', bkg_flux=0.5,
-                             max_radius_kpc=1, max_radius_arcsec=None,
-                             min_pixels=5, min_distance=.1, verbose=False, tdir='test_results/')
+        identify_HII_regions(self.nir.copy(), self.nir_head, # pylint: disable=invalid-name
+                             flux_llim=9, flux_ulim=20, z=0.01, obj_name='noisy_isolated_region',
+                             bkg_flux=0.5, max_radius_kpc=1, max_radius_arcsec=None,
+                             min_pixels=5, min_separation=.1, verbose=False, tdir='test_results/')
 
         with fits.open('test_results/noisy_isolated_region_HII_segmentation_map.fits') as tmp:
             seg_map = tmp['Region_IDs'].data  # pylint: disable=no-member
@@ -108,11 +106,12 @@ class HIIdentifyTestCase(unittest.TestCase):
         """
         Test that no regions are identified in the just_noise map
         """
+        self.jun, self.jun_head = cti.just_noise()
 
-        identify_HII_regions(self.jun.copy(), self.jun_head, flux_llim=9, # pylint: disable=invalid-name
-                             flux_ulim=20, z=0.01, obj_name='just_noise', bkg_flux=5,
+        identify_HII_regions(self.jun.copy(), self.jun_head, # pylint: disable=invalid-name
+                             flux_llim=9, flux_ulim=20, z=0.01, obj_name='just_noise', bkg_flux=5,
                              max_radius_kpc=.5, max_radius_arcsec=None,
-                             min_pixels=5, min_distance=.1, verbose=False, tdir='test_results/')
+                             min_pixels=5, min_separation=.1, verbose=False, tdir='test_results/')
 
 
         with fits.open('test_results/just_noise_HII_segmentation_map.fits') as tmp:
@@ -129,11 +128,12 @@ class HIIdentifyTestCase(unittest.TestCase):
         """
         Test for multiple isolated regions
         """
+        self.mur, self.mur_head = cti.multiple_regions()
 
-        identify_HII_regions(self.mur.copy(), self.mur_head, flux_llim=9, # pylint: disable=invalid-name
-                             flux_ulim=20, z=0.01, obj_name='multiple_regions', bkg_flux=0.5,
-                             max_radius_kpc=1, max_radius_arcsec=None,
-                             min_pixels=5, min_distance=.3, verbose=False, tdir='test_results/')
+        identify_HII_regions(self.mur.copy(), self.mur_head, # pylint: disable=invalid-name
+                             flux_llim=9, flux_ulim=20, z=0.01, obj_name='multiple_regions',
+                             bkg_flux=0.5, max_radius_kpc=1, max_radius_arcsec=None,
+                             min_pixels=5, min_separation=.3, verbose=False, tdir='test_results/')
 
 
         ideal_map = np.zeros_like(self.mur)
