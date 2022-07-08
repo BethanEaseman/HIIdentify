@@ -19,7 +19,7 @@
    * :ref:`search`
 
 
-.. image:: ../Images/HIIdentify-logo.png
+.. image:: https://raw.githubusercontent.com/BethanEaseman/HIIdentify/master/Images/HIIdentify-logo.png
    :height: 165
    :width: 200
    :alt: HIIdentify logo
@@ -58,7 +58,7 @@ In the below example map (*left*), the flux of the H :math:`\alpha` emission lin
 In the right-hand image, the segmentation map returned by HIIdentify can be seen. A 2D map is returned, with all pixels corresponding to a particular HII region set to the ID number of the region. This allows the segmentation map to be used to mask out regions of maps of other parameters, such as line fluxes or metallicity maps, pertaining to the selected HII region.
 
 
-.. image:: ../Images/NGC1483_ha_regionoutline_segmentationmap.png
+.. image:: https://raw.githubusercontent.com/BethanEaseman/HIIdentify/master/Images/NGC1483_ha_regionoutline_segmentationmap.png
    :alt: HIIdentify examples
    :align: center
 
