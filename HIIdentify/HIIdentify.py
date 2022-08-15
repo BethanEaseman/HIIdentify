@@ -40,7 +40,11 @@ def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_li
     """
 
     sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & (hasn>hasn_lim) \
-          & (HaEW_sn > HaEWsnlim)
+    & (HaEW_sn > HaEWsnlim)
+
+    if np.count_nonzero(sel) == 0:
+        raise Exception(f"HIIdentify: determine_bkg_flux - no spaxels meet the given HaEW, \
+distance, and Ha s/n criteria")
 
     hdu = fits.PrimaryHDU(np.array(sel, dtype=float))
     hdu.writeto(f"{tdir}{galaxy_name}_bkg_flux_mask.fits", overwrite=True)
