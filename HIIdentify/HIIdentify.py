@@ -1,13 +1,36 @@
 """
-Script contains functions to read in a 2D MUSE flux map and identify the bright regions,
+Script contains functions to identify the bright regions in a Halpha flux map,
 taken to be the HII regions.
 
-read_in_map:
-- Reads in 2D MUSE flux map for emission line. Normally want to be using the H alpha flux map.
+determine_bkg_flux:
+- Determines the background flux, used in HIIdentify as the lower flux limit above which
+  to include pixels in a HII region.
 
 identify_HII_regions:
-- Identifies bright regions within the given map, following the given input parameters. These
-are assumed to be the HII regions when using a H alpha map.
+- Identifies bright regions within the given map, following the given input parameters.
+  These are assumed to be the HII regions when using a H alpha map.
+
+determine_distances:
+- Takes the redshift of a galaxy, as well as the maximum radius required for the HII region,
+  and returns the maximum radial size in pixels, as well as maps of the x and y index for
+  each pixel in the map.
+
+check_surrounding_pixels:
+- Checks that the 8 pixels surrounding the selected 'peak' meet various conditions.
+
+check_nearest_peak:
+- Checks if another peak has already been identified less than min_separation away.
+
+determine_annuli:
+- Determines the indices of pixels falling within each annulus, moving outwards
+  from the index of the peak position.
+
+add_pixels_to_region:
+- Determines which pixels meet the conditions to be added to the region, moving radially
+  outwards from the peak.
+
+print_msg:
+- If verbose is True, prints the message to the screen
 
 =======================
 Citation: Easeman et al. (2022), in prep.
@@ -18,10 +41,6 @@ import numpy as np
 
 from astropy.io import fits
 from astropy.cosmology import WMAP9 as cosmo #pylint: disable=no-name-in-module
-
-
-
-
 
 
 
@@ -39,8 +58,8 @@ def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_li
         2D array of HaEW values
     """
 
-    sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & (hasn>hasn_lim) \
-          & (HaEW_sn > HaEWsnlim)
+    sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & \
+        (hasn>hasn_lim) & (HaEW_sn > HaEWsnlim)
 
     hdu = fits.PrimaryHDU(np.array(sel, dtype=float))
     hdu.writeto(f"{tdir}{galaxy_name}_bkg_flux_mask.fits", overwrite=True)
@@ -95,10 +114,6 @@ def identify_HII_regions(linemap, header, flux_llim, flux_ulim, z, #pylint: disa
        are also produced, as well as maps for which pixels were considered as potential peaks &
        if / why they were rejected. These are saved as obj_name+"_HII_trackermaps.fits" in tdir.
     """
-
-    ## Add in a check_inputs fn? i.e. check that the max flux isn't too small, flux_llim isn't
-    #  too high... though do want everything to be quite generalised - maybe just pops up a
-    # warning instead of raising an exception here?
 
     region_fluxes = linemap.copy()
     peak_tracker = np.zeros_like(linemap, dtype=float)-5
@@ -375,7 +390,7 @@ def check_nearest_peak(linemap, peak_tracker_map, peak_idx, peak_tracker_val, di
 
 def determine_annuli(yindx, xindx, peak_idx, maxdist, annulus_ind, AngD, pixsky):
     """
-    Determine the indices of pixels falling within each annulus, moving outwards
+    Determines the indices of pixels falling within each annulus, moving outwards
     from the index of the peak position.
 
     yindx, xindx : array of int
