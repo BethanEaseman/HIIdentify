@@ -5,6 +5,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/BethanEaseman/HIIdentify?style=plastic)
 ![version](https://img.shields.io/pypi/v/HIIdentify?style=plastic)
 ![license](https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic)
+![linting](https://img.shields.io/badge/linting-pylint-yellowgreen)
 
 Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H$\alpha$ emssion line flux.
 
