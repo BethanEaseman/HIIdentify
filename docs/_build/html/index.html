@@ -32,7 +32,7 @@
 
           <div class="body" role="main">
             
-  <a class="reference internal image-reference" href="_images/HIIdentify-logo.png"><img alt="HIIdentify logo" src="_images/HIIdentify-logo.png" style="width: 200px; height: 165px;" /></a>
+  <a class="reference internal image-reference" href="https://raw.githubusercontent.com/BethanEaseman/HIIdentify/master/Images/HIIdentify-logo.png"><img alt="HIIdentify logo" src="https://raw.githubusercontent.com/BethanEaseman/HIIdentify/master/Images/HIIdentify-logo.png" style="width: 200px; height: 165px;" /></a>
 <section id="hiidentify">
 <h1>HIIdentify<a class="headerlink" href="#hiidentify" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
@@ -44,10 +44,10 @@
 <a class="reference external image-reference" href="https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic"><img alt="License" src="https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-green?style=plastic" /></a>
 <p>Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emssion line flux.</p>
 <p><em>Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome</em>.</p>
-<p>HIIdentify works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak.</p>
-<p>In the below example map (<em>left</em>), the flux of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emission line can be seen, with the highest flux regions show in yellow, and lowest flux regions in purple. The regions identfied by HIIdentify can be seen as the red outlines. Here it can be seen that the regions are not restricted to being a particular shape, and that all regions with a peak flux above a given limit have been identified.</p>
-<p>In the right-hand image, the segmentation map returned by HIIdentify can be seen. A 2D map is returned, with all pixels corresponding to a particular HII region set to the ID number of the region. This allows the segmentation map to be used to mask out regions of maps of other parameters, such as line fluxes or metallicity maps, pertaining to the selected HII region.</p>
-<img alt="HIIdentify examples" class="align-center" src="_images/NGC1483_ha_regionoutline_segmentationmap.png" />
+<p><code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak.</p>
+<p>In the below example map (<em>left</em>), the flux of the H <span class="math notranslate nohighlight">\(\alpha\)</span> emission line can be seen, with the highest flux regions show in yellow, and lowest flux regions in purple. The regions identfied by <code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> can be seen as the red outlines. Here it can be seen that the regions are not restricted to being a particular shape, and that all regions with a peak flux above a given limit have been identified.</p>
+<p>In the right-hand image, the segmentation map returned by <code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> can be seen. A 2D map is returned, with all pixels corresponding to a particular HII region set to the ID number of the region. This allows the segmentation map to be used to mask out regions of maps of other parameters, such as line fluxes or metallicity maps, pertaining to the selected HII region.</p>
+<img alt="HIIdentify examples" class="align-center" src="https://raw.githubusercontent.com/BethanEaseman/HIIdentify/master/Images/NGC1483_ha_regionoutline_segmentationmap.png" />
 <section id="installing-hiidentify">
 <h2>Installing HIIdentify<a class="headerlink" href="#installing-hiidentify" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> can be found on <a class="reference external" href="https://pypi.org/project/HIIdentify/">PyPI</a>, and installed using <a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a>, by running:</p>
@@ -57,10 +57,11 @@
 </section>
 <section id="using-hiidentify">
 <h2>Using HIIdentify<a class="headerlink" href="#using-hiidentify" title="Permalink to this headline">¶</a></h2>
+<p>Documentation and examples will be added in due course, in the meantime, if you would like to use <code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> or are interested in learning more, please email Bethan Easeman (<a class="reference external" href="mailto:be329&#37;&#52;&#48;bath&#46;ac&#46;uk">be329<span>&#64;</span>bath<span>&#46;</span>ac<span>&#46;</span>uk</a>) and I’ll be glad to talk it through with you!</p>
 </section>
 <section id="how-to-cite-hiidentify">
 <h2>How to cite HIIdentify<a class="headerlink" href="#how-to-cite-hiidentify" title="Permalink to this headline">¶</a></h2>
-<p>If you use HIIdentify as part of your work, please cite Easeman et al. (2022) <em>in prep</em>.</p>
+<p>If you use <code class="docutils literal notranslate"><span class="pre">HIIdentify</span></code> as part of your work, please cite Easeman et al. (2022) <em>in prep</em>.</p>
 </section>
 </section>
 
