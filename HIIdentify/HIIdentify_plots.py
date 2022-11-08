@@ -13,6 +13,7 @@ Citation: Easeman et al. (2022), in prep.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 from astropy.io import fits
 
 
@@ -91,3 +92,134 @@ def radial_distribution(datadir, galaxy_name, distmap_fname, \
     plt.legend(bbox_to_anchor=(1.0, 0.5), loc="center left", title="Region ID")
     fig.savefig(tdir+"Regions_dist_from_galaxy_centre.png")
     print("\n Saved figure: %s \n"%(tdir+"Regions_dist_from_galaxy_centre.png"))
+
+
+
+
+
+
+
+def draw_region_outlines(sel, x0=0, y0=0, x1 = None, y1= None):
+    """
+    Snippet adapted from https://stackoverflow.com/questions/24539296/outline-a-region-in-a-graph
+
+    Takes in a boolean array of the regions, and returns arrays to draw on outlines
+
+    sel: boolean array
+        Mask of which regions to outline
+
+    x0, y0: float
+        Minimum x and y values (Default = 0)
+    x1, y1: float
+        Maximum x and y values (Default = size of array, works for maps)
+
+
+    """
+
+    if x1 is None:
+        x1 = sel.shape[1]
+    if y1 is None:
+        y1= sel.shape[0]
+
+
+    # a vertical line segment is needed, when the pixels next to each other horizontally
+    #   belong to diffferent groups (one is part of the mask, the other isn't)
+    # after this ver_seg has two arrays, one for row coordinates, the other for column coordinates
+    ver_seg = np.where(sel[:,1:] != sel[:,:-1])
+
+    # the same is repeated for horizontal segments
+    hor_seg = np.where(sel[1:,:] != sel[:-1,:])
+
+    # if we have a horizontal segment at 7,2, it means that it must be drawn between pixels
+    #   (2,7) and (2,8), i.e. from (2,8)..(3,8)
+    # in order to draw a discountinuous line, we add Nones in between segments
+    line = []
+    for pix in zip(*hor_seg):
+        line.append((pix[1], pix[0]+0.5))
+        line.append((pix[1]+0.5, pix[0]+0.5))
+        line.append((np.nan,np.nan))
+
+    # and the same for vertical segments
+    for pix in zip(*ver_seg):
+        line.append((pix[1]+0.5, pix[0]))
+        line.append((pix[1]+0.5, pix[0]+0.5))
+        line.append((np.nan, np.nan))
+
+    # now we transform the list into a numpy array of Nx2 shape
+    segments = np.array(line)
+
+    # now we need to know something about the image which is shown
+    # with this information we can rescale our points
+
+    segments[:,0] = x0 + (x1-x0) * segments[:,0] / sel.shape[1]
+    segments[:,1] = y0 + (y1-y0) * segments[:,1] / sel.shape[0]
+
+    # Plot these segments using:
+    # plt.plot(segments[:,0], segments[:,1], color='lightcoral', linewidth=0.5)
+
+    return segments
+
+
+
+def map_region_outline(galaxy_map, seg_map_fname, vmin=None, vmax=None, log_scaling=True,
+                       origin='lower', cbar_label='', linewidth=2, tdir='./', galaxy_name='',
+                       parameter_name=''):
+    """
+    Produces a plot of the galaxy map, with the outlines of the identified HII regions
+    overlaid.
+
+    galaxy_map: 2d array
+        Map to be plotted, e.g. map of Ha flux
+    seg_map_fname: str
+        Path to segmentation map produced by HIIdentify
+    vmin, vmax: floats
+        Set to define the min and max of the colour scaling. Default = None.
+    log_scaling: bool
+        If True, the colour of the map will use log scaling, otherwise linear scaling will
+        be used.
+    origin: str
+        Passed to plt.imshow. Default: 'lower' is used to account for fits.open flipping the
+        map.
+    cbar_label: str
+        If given, label for the colourbar
+    linewidth:float
+        Linewidth for the region outlines. Default = 2.
+    tdir: str
+        Target directory for saving the file. Default='./'.
+    galaxy_name: str
+        Used for naming the output file. Default = ''.
+    parameter_name: str
+        Used for naming the output file. Default = ''.
+
+    """
+
+    fig,axes = plt.subplots(figsize=(17,15))
+    if log_scaling:
+        norm_kw = {'norm': colors.LogNorm(vmin=vmin, vmax=vmax)}
+    else:
+        norm_kw = {'vmin':vmin, 'vmax':vmax}
+    plt.imshow(galaxy_map, origin=origin, **norm_kw)
+    # origin = 'lower' accounts for the fact that fits.open flips the map
+    cbar = plt.colorbar(shrink=0.8, extend='both')
+    if cbar_label != '':
+        cbar.set_label(r'H$\alpha$ flux', rotation=270, size=32, labelpad=25)
+    axes.axis('off') #remove x and y ticks & labels for the map
+    fig.tight_layout()
+
+
+
+    #Draw outlines around regions
+    with fits.open(seg_map_fname) as tmp:
+        region_IDs = tmp['Region_IDs'].data
+    regions = np.unique(region_IDs[region_IDs > 0])
+    for r in regions:
+        sel = region_IDs == r
+        segments = draw_region_outlines(sel, x1 = sel.shape[1], y1= sel.shape[0])
+        plt.plot(segments[:,0], segments[:,1], color='lightcoral', linewidth=linewidth)
+
+
+    fname = tdir + galaxy_name + parameter_name + '_regionoutlines.png'
+
+    fig.savefig(fname, bbox_inches="tight")
+
+    print("\nSaved ", fname, "\n")
