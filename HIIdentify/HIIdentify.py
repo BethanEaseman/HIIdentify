@@ -62,7 +62,7 @@ def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_li
     & (HaEW_sn > HaEWsnlim)
 
     if np.count_nonzero(sel) == 0:
-        raise Exception(f"HIIdentify: determine_bkg_flux - no spaxels meet the given HaEW, \
+        raise Exception("HIIdentify: determine_bkg_flux - no spaxels meet the given HaEW, \
 distance, and Ha s/n criteria")
 
     hdu = fits.PrimaryHDU(np.array(sel, dtype=float))
@@ -372,7 +372,8 @@ disregarding this one"
 
 
 
-def check_nearest_peak(linemap, peak_tracker_map, peak_idx, peak_tracker_val, distmap, min_separation):
+def check_nearest_peak(linemap, peak_tracker_map, peak_idx, peak_tracker_val, distmap,
+                       min_separation):
     """
     Checks if another peak has already been identified less than min_separation away.
     """
