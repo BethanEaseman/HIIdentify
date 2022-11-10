@@ -2,6 +2,7 @@
 *~
 # python files
 *.egg-info
+*flymake.py
 *.pyc
 dist/
 build/
