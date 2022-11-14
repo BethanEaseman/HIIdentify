@@ -30,7 +30,9 @@ pip install HIIdentify
 
 ## Using HIIdentify
 
-Documentation can be found [here](https://hiidentify.readthedocs.io/en/latest/). Further documentation and examples will be added in due course, in the meantime, if you would like to use `HIIdentify` or are interested in learning more, please email Bethan Easeman (be329@bath.ac.uk) and I'll be glad to talk it through with you!
+Documentation can be found [here](https://hiidentify.readthedocs.io/en/latest/). 
+
+If you have any further questions, please email Bethan Easeman (be329@bath.ac.uk) and I'll be glad to talk it through with you!
 
 ## How to cite HIIdentify
 
