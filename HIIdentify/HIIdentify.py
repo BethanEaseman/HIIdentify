@@ -45,6 +45,7 @@ from astropy.cosmology import WMAP9 as cosmo #pylint: disable=no-name-in-module
 
 
 def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_lim, \
+                       HaEW_low_lim=6, HaEW_upper_lim=14,
                        percentile=75, dist_lim=1.5, galaxy_name='', \
                        tdir='./'): #pylint: disable=invalid-name
     # getting pylint to ignore that HaEW doesn't conform to snake-case style
@@ -52,14 +53,41 @@ def determine_bkg_flux(linemap, HaEW, HaEW_sn, HaEWsnlim, distmap, hasn, hasn_li
     Determines a value for the background flux, to be given to identify_HII_regions.
     Finds the median or percentile of the Ha flux values for pixels with HaEW > 6 and < 14
 
-    linemap- 2D array
+    linemap: 2D array
         2D array of flux values with cuts already applied for HaEW and BPT region.
-    HaEW - 2D array
+    HaEW: 2D array
         2D array of HaEW values
+    HaEW_sn: 2D array
+        2D array of HaEW signal/noise values
+    HaEWsnlim: float
+        The S/N limit below which to discard pixels
+    distmap: 2D array
+        Distmap, and a limit above which to discard pixels, can be given.
+        Can be set to None, in which case no cut is made.
+    hasn: 2D array
+        Array of S/N of the linemap fluxes.
+    hasn_lim: float
+        Limit below which to discard pixels to reduce noise
+    HaEW_low_lim, HaEW_upper_lim: float
+        Limits applied to the pixels to remove pixels associated with star formation.
+    percentile: float
+        The given percentile of the flux values which meet the various HaEW and S/N criteria
+        is returned as a measure of the background flux level. Default = 75.
+    dist_lim: float
+        Limit can be given to exclude pixels above this distance from the centre.
+        Default=1.5 (R/R_eff)
+    galaxy_name: str
+        Name of the galaxy.
+    tdir: str
+        Target directory - a flux mask is produced for use when checking which pixels
+        have been excluded
     """
 
-    sel = (HaEW>6) & (HaEW<14) & np.isfinite(linemap) & (distmap < dist_lim) & (hasn>hasn_lim) \
-    & (HaEW_sn > HaEWsnlim)
+    sel = (HaEW>HaEW_low_lim) & (HaEW<HaEW_upper_lim) & np.isfinite(linemap) & (hasn>hasn_lim) \
+        & (HaEW_sn > HaEWsnlim)
+
+    if distmap is not None:
+        sel = sel & (distmap < dist_lim)
 
     if np.count_nonzero(sel) == 0:
         raise Exception("HIIdentify: determine_bkg_flux - no spaxels meet the given HaEW, \
