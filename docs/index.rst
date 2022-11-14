@@ -51,7 +51,7 @@ HIIdentify
 
 Welcome to HIIdentify! This code identifies HII regions within a galaxy, using a map of the H :math:`\alpha` emssion line flux.
 
-*Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome*.
+*Please note, HIIdentify is under active development - any contributions and / or feedback would be very welcome - please contact me at be329@bath.ac.uk*.
 
 ``HIIdentify`` works by identifying the brightest pixels within the image, then growing the region to include the surrounding pixels with fluxes greater than the specified background flux, up to a maximum size. Where regions merge, the distance from the merging pixels to the peaks of the two regions are considered, and the pixel is assigned to the region with the closest peak.
 
@@ -84,6 +84,9 @@ Getting started with HIIdentify
 
 :doc:`examples`
 	 Examples of how to use ``HIIdentify``
+
+:doc:`producing_plots`
+	 An example of the plots which can be created using ``HIIdentify_plots``.
 
 
 
